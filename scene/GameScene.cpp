@@ -6,8 +6,9 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	delete spriteBG_;   // BG
-	delete modelStage_; // ステージ
+	delete spriteBG_;    // BG
+	delete modelStage_;  // ステージ
+	delete modelPlayer_; // プレイヤー
 }
 
 void GameScene::Initialize() {
@@ -40,11 +41,64 @@ void GameScene::Initialize() {
 	    worldTransformStage_.scale_, worldTransformStage_.rotation_,
 	    worldTransformStage_.translation_);
 
-	//変換行列を定数バッファに転送
+	// 変換行列を定数バッファに転送
 	worldTransformStage_.TransferMatrix();
+
+	// プレイヤー
+	textureHandlePlayer_ = TextureManager::Load("player.png");
+	modelPlayer_ = Model::Create();
+	worldTransformPlayer_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformPlayer_.Initialize();
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+	PlayerUpdate(); // プレイヤー更新
+}
+
+//--------------------------------------------------------------------
+// プレイヤー
+//--------------------------------------------------------------------
+void GameScene::PlayerUpdate() {
+	// 変換行列を更新
+	worldTransformPlayer_.matWorld_ = MakeAffineMatrix(
+	    worldTransformPlayer_.scale_, worldTransformPlayer_.rotation_,
+	    worldTransformPlayer_.translation_);
+
+	// 変換行列を定数バッファに転送
+	worldTransformPlayer_.TransferMatrix();
+
+	// 移動
+
+	// 右へ移動
+	if (input_->PushKey(DIK_D)) {
+		worldTransformPlayer_.translation_.x += 0.1f;
+	}
+
+	// 左へ移動
+	if (input_->PushKey(DIK_A)) {
+		worldTransformPlayer_.translation_.x -= 0.1f;
+	}
+
+	// 変換行列を更新
+	worldTransformStage_.matWorld_ = MakeAffineMatrix(
+	    worldTransformStage_.scale_, worldTransformStage_.rotation_,
+	    worldTransformStage_.translation_);
+
+	// 変換行列を定数バッファに転送
+	worldTransformStage_.TransferMatrix();
+
+	// 移動制限
+
+	// 右側への移動制限
+	if (worldTransformPlayer_.translation_.x >= 4) {
+		worldTransformPlayer_.translation_.x = 4;
+	}
+
+	// 左側への移動制限
+	if (worldTransformPlayer_.translation_.x <= -4) {
+		worldTransformPlayer_.translation_.x = -4;
+	}
+}
 
 void GameScene::Draw() {
 
@@ -78,6 +132,9 @@ void GameScene::Draw() {
 
 	// ステージ
 	modelStage_->Draw(worldTransformStage_, viewProjection_, textureHandleStage_);
+
+	// プレイヤー
+	modelPlayer_->Draw(worldTransformPlayer_, viewProjection_, textureHandlePlayer_);
 
 	/// </summary>
 

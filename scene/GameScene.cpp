@@ -54,7 +54,7 @@ void GameScene::Initialize() {
 	// ビーム
 	textureHandleBeam_ = TextureManager::Load("beam.png");
 	modelBeam_ = Model::Create();
-	worldTransformBeam_.scale_ = {2.0f, 0.2f, 0.2f};
+	worldTransformBeam_.scale_ = {0.2f, 0.2f, 0.2f};
 	worldTransformBeam_.Initialize();
 }
 

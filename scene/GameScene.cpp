@@ -9,6 +9,7 @@ GameScene::~GameScene() {
 	delete spriteBG_;    // BG
 	delete modelStage_;  // ステージ
 	delete modelPlayer_; // プレイヤー
+	delete modelBeam_;   // ビーム
 }
 
 void GameScene::Initialize() {
@@ -49,10 +50,19 @@ void GameScene::Initialize() {
 	modelPlayer_ = Model::Create();
 	worldTransformPlayer_.scale_ = {0.5f, 0.5f, 0.5f};
 	worldTransformPlayer_.Initialize();
+
+	// ビーム
+	textureHandleBeam_ = TextureManager::Load("beam.png");
+	modelBeam_ = Model::Create();
+	worldTransformBeam_.scale_ = {2.0f, 0.2f, 0.2f};
+	worldTransformBeam_.Initialize();
 }
 
 void GameScene::Update() {
 	PlayerUpdate(); // プレイヤー更新
+	BeamUpdate();   // ビーム更新
+	BeamMove();     // ビーム移動
+	BeamBorn();     // ビーム発生
 }
 
 //--------------------------------------------------------------------
@@ -79,14 +89,6 @@ void GameScene::PlayerUpdate() {
 		worldTransformPlayer_.translation_.x -= 0.1f;
 	}
 
-	// 変換行列を更新
-	worldTransformStage_.matWorld_ = MakeAffineMatrix(
-	    worldTransformStage_.scale_, worldTransformStage_.rotation_,
-	    worldTransformStage_.translation_);
-
-	// 変換行列を定数バッファに転送
-	worldTransformStage_.TransferMatrix();
-
 	// 移動制限
 
 	// 右側への移動制限
@@ -97,6 +99,40 @@ void GameScene::PlayerUpdate() {
 	// 左側への移動制限
 	if (worldTransformPlayer_.translation_.x <= -4) {
 		worldTransformPlayer_.translation_.x = -4;
+	}
+}
+
+//----------------------------------------------------------------
+// ビーム
+//----------------------------------------------------------------
+void GameScene::BeamUpdate() {
+	// 変換行列を更新
+	worldTransformBeam_.matWorld_ = MakeAffineMatrix(
+	    worldTransformBeam_.scale_, worldTransformBeam_.rotation_,
+	    worldTransformBeam_.translation_);
+
+	// 変換行列を定数バッファに転送
+	worldTransformBeam_.TransferMatrix();
+}
+
+// ビーム移動
+void GameScene::BeamMove() {
+	if (beamFlag_) {
+		worldTransformBeam_.translation_.z += 1.0f;
+		worldTransformBeam_.rotation_.x += 0.1f;
+	}
+}
+
+// ビーム発生
+void GameScene::BeamBorn() {
+	if (input_->PushKey(DIK_SPACE)) {
+		beamFlag_ = true;
+	}
+
+	// ビームが座標が40以上になったらビームが消える処理
+	if (worldTransformBeam_.translation_.z >= 40) {
+		beamFlag_ = false;
+		worldTransformBeam_.translation_.z = 0;
 	}
 }
 
@@ -135,6 +171,9 @@ void GameScene::Draw() {
 
 	// プレイヤー
 	modelPlayer_->Draw(worldTransformPlayer_, viewProjection_, textureHandlePlayer_);
+
+	// ビーム
+	modelBeam_->Draw(worldTransformBeam_, viewProjection_, textureHandleBeam_);
 
 	/// </summary>
 

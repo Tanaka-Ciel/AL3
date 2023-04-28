@@ -80,12 +80,22 @@ void GameScene::PlayerUpdate() {
 	// 移動
 
 	// 右へ移動
-	if (input_->PushKey(DIK_D)) {
+	if (input_->PushKey(DIK_D) && beamFlag_ == false) {
+		// ビーム未発生時:プレイヤーとビームの座標同一
+		worldTransformPlayer_.translation_.x += 0.1f;
+		worldTransformBeam_.translation_.x += 0.1f;
+	} else if (input_->PushKey(DIK_D) && beamFlag_) {
+		// ビーム発生中:ビームのみ直進、プレイヤーは入力された動作
 		worldTransformPlayer_.translation_.x += 0.1f;
 	}
 
 	// 左へ移動
-	if (input_->PushKey(DIK_A)) {
+	if (input_->PushKey(DIK_A) && beamFlag_ == false) {
+		// ビーム未発生時:プレイヤーとビームの座標同一
+		worldTransformPlayer_.translation_.x -= 0.1f;
+		worldTransformBeam_.translation_.x -= 0.1f;
+	} else if (input_->PushKey(DIK_A) && beamFlag_) {
+		// ビーム発生中:ビームのみ直進、プレイヤーは入力された動作
 		worldTransformPlayer_.translation_.x -= 0.1f;
 	}
 
@@ -94,11 +104,13 @@ void GameScene::PlayerUpdate() {
 	// 右側への移動制限
 	if (worldTransformPlayer_.translation_.x >= 4) {
 		worldTransformPlayer_.translation_.x = 4;
+		worldTransformBeam_.translation_.x = 4;
 	}
 
 	// 左側への移動制限
 	if (worldTransformPlayer_.translation_.x <= -4) {
 		worldTransformPlayer_.translation_.x = -4;
+		worldTransformBeam_.translation_.x = -4;
 	}
 }
 
@@ -132,7 +144,9 @@ void GameScene::BeamBorn() {
 	// ビームが座標が40以上になったらビームが消える処理
 	if (worldTransformBeam_.translation_.z >= 40) {
 		beamFlag_ = false;
-		worldTransformBeam_.translation_.z = 0;
+		worldTransformBeam_.translation_.z = worldTransformPlayer_.translation_.z;
+		worldTransformBeam_.translation_.x = worldTransformPlayer_.translation_.x;
+		worldTransformBeam_.translation_.y = worldTransformPlayer_.translation_.y;
 	}
 }
 

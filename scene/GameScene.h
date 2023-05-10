@@ -40,6 +40,10 @@ public: // メンバ関数
 	void BeamMove();       // ビーム移動
 	void BeamBorn();       // ビーム発生
 	int beamFlag_ = false; // ビームフラグ(false:存在しない, true:存在する)
+	void EnemyUpdate();    // 敵更新
+	void EnemyMove();      // 敵移動
+	void EnemyBorn();      // 敵発生
+	int enemyFlag_ = false; // 敵存在フラグ(false:存在しない, true:存在する)
 
 	/// <summary>
 	/// 描画
@@ -65,6 +69,11 @@ public: // メンバ関数
 	uint32_t textureHandleBeam_ = 0;
 	Model* modelBeam_ = nullptr;
 	WorldTransform worldTransformBeam_;
+
+	// 敵
+	uint32_t textureHandleEnemy_ = 0;
+	Model* modelEnemy_ = nullptr;
+	WorldTransform worldTransformEnemy_;
 
 	/// </summary>
 	void Draw();

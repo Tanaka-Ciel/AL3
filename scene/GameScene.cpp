@@ -180,7 +180,7 @@ void GameScene::EnemyUpdate() {
 void GameScene::EnemyMove() {
 	if (enemyFlag_) {
 		worldTransformEnemy_.translation_.z -= 0.5f;
-		worldTransformEnemy_.rotation_.x += 0.1f;
+		worldTransformEnemy_.rotation_.x -= 0.1f;
 	}
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Audio.h"
+#include "DebugText.h"
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
@@ -35,15 +36,20 @@ public: // メンバ関数
 	/// </summary>
 	void Update();
 
-	void PlayerUpdate();   // プレイヤー更新
-	void BeamUpdate();     // ビーム更新
-	void BeamMove();       // ビーム移動
-	void BeamBorn();       // ビーム発生
-	int beamFlag_ = false; // ビームフラグ(false:存在しない, true:存在する)
-	void EnemyUpdate();    // 敵更新
-	void EnemyMove();      // 敵移動
-	void EnemyBorn();      // 敵発生
-	int enemyFlag_ = false; // 敵存在フラグ(false:存在しない, true:存在する)
+	void PlayerUpdate();         // プレイヤー更新
+	void BeamUpdate();           // ビーム更新
+	void BeamMove();             // ビーム移動
+	void BeamBorn();             // ビーム発生
+	int beamFlag_ = false;       // ビームフラグ(false:存在しない, true:存在する)
+	void EnemyUpdate();          // 敵更新
+	void EnemyMove();            // 敵移動
+	void EnemyBorn();            // 敵発生
+	int enemyFlag_ = false;      // 敵存在フラグ(false:存在しない, true:存在する)
+	void Collision();            // 衝突判定
+	void CollisionPlayerEnemy(); // 衝突判定(プレイヤーと敵)
+	void CollisionBeamEnemy();   // 衝突判定(ビームと敵)
+	int gameScore_ = 0;          // ゲームスコア
+	int playerLife_ = 3;         // プレイヤーライフ
 
 	/// <summary>
 	/// 描画
@@ -74,6 +80,9 @@ public: // メンバ関数
 	uint32_t textureHandleEnemy_ = 0;
 	Model* modelEnemy_ = nullptr;
 	WorldTransform worldTransformEnemy_;
+
+	// デバッグ文字表示
+	DebugText* debugText_ = nullptr;
 
 	/// </summary>
 	void Draw();

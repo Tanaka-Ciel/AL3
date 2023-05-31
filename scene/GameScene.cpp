@@ -232,6 +232,9 @@ void GameScene::CollisionPlayerEnemy() {
 
 			// 存在しない
 			enemyFlag_ = false;
+
+			//ライフ減算
+			playerLife_--;
 		}
 	}
 }
@@ -251,6 +254,9 @@ void GameScene::CollisionBeamEnemy() {
 			// 存在しない
 			enemyFlag_ = false;
 			beamFlag_ = false;
+
+			//スコア加算
+			gameScore_++;
 		}
 	}
 }
@@ -314,13 +320,16 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 
-	debugText_->Print("AAA", 10, 10, 2);
 	debugText_->DrawAll();
 
 	// ゲームスコア
 	char str[100];
 	sprintf_s(str, "SCORE %d", gameScore_);
 	debugText_->Print(str, 200, 10, 2);
+
+	//ライフ
+	sprintf_s(str, "LIFE %d", playerLife_);
+	debugText_->Print(str, 1000, 10, 2);
 
 	/// </summary>
 
